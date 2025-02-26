@@ -1,0 +1,45 @@
+networks:
+  websocket-network-1:
+  websocket-network-2:
+  meetzy_network:
+
+services:
+  websocket-server-1:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    environment:
+      - NODE_ENV=${NODE_ENV}
+      - REDIS_HOST=${REDIS_HOST}
+      - SERVER_ID=${SERVER_1}
+    command: npm run dev
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    networks:
+      - websocket-network-1
+      - meetzy_network
+
+  websocket-server-2:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3001:3000"
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    environment:
+      - NODE_ENV=${NODE_ENV}
+      - REDIS_HOST=${REDIS_HOST}
+      - SERVER_ID=${SERVER_2}
+    command: npm run dev
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    networks:
+      - websocket-network-2
+      - meetzy_network
